@@ -77,26 +77,6 @@ The book delves into:
 
 ---
 
-## 🔗 Useful Links
-
-- [ARAS Labs Official Website](https://aras.kntu.ac.ir/)
-- [ARAS Academy](https://aras.kntu.ac.ir/)
-- [Video Gallery](https://aras.kntu.ac.ir/VideoGallery)
-- [Latest Course](https://aras.kntu.ac.ir/LatestCourse)
-
----
-
-## 🌟 Research Themes
-
-- **Autonomous Robotics (AR)** 🤖  
-- **Surgical Robotics (SR)** 🏥  
-- **Mixed Reality in Surgery (MR)** 🎥  
-- **Parallel and Cable Robotics (PACR)** 🚁  
-- **Dynamical Systems Analysis and Control** ⚙️  
-- **Electrical Vehicles** 🚗  
-
----
-
 ## 📜 License
 
 This project is licensed under the terms of the [MIT License](LICENSE).
