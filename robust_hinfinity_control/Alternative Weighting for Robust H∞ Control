@@ -1,0 +1,102 @@
+% =========================================================================
+% finex6.m - Alternative Weighting for Robust H∞ Control
+% =========================================================================
+% This script follows the same robust H∞ control framework as `final.m`
+% but uses a different weighting function \( W_t \).
+% While the plant remains unchanged, modifying \( W_t \) affects 
+% the controller design and robustness performance.
+% =========================================================================
+
+%% 1. Define System Parameters
+
+%% 2. Define Weighting Functions
+numerator_wt = [2.4 0];
+denominator_wt = [1 4];
+
+%% 3. Define Plant Transfer Function
+numerator_plant = 10 * [1.5 -1];
+denominator_plant = conv([1 0 -1], [0.25 1]);
+
+% Convert systems to Mu-synthesis format
+plant = nd2sys(numerator_plant, denominator_plant);
+wt = nd2sys(numerator_wt, denominator_wt);
+wu = nd2sys(1e-6, 1);
+
+%%%% =========================================================================
+%  Define Interconnection Structure
+%%%% =========================================================================
+systemnames = 'plant wt wu';
+inputvar = '[yref; u]';
+outputvar = '[wt; wu; yref-plant]';
+input_to_plant = '[ u ]';
+input_to_wt = '[plant]';
+input_to_wu = '[u]';
+sysoutname = 'plant_ic';
+cleanupsysic = 'yes';
+sysic
+
+%%%% =========================================================================
+%  System Information and Minimal Realization
+%%%% =========================================================================
+minfo(plant_ic)
+spoles(plant_ic)
+
+pause  % Press any key to continue
+clc
+
+% Ensure minimal realization to avoid uncontrollable hidden modes
+[A, B, C, D] = unpck(plant_ic);
+[A, B, C, D] = minreal(A, B, C, D);
+plant_ic = pck(A, B, C, D);
+
+pause  % Press any key to continue
+clc 
+
+%%%% =========================================================================
+%  H∞ Controller Synthesis
+%%%% =========================================================================
+[k1, g1, gf1] = hinfsyn(plant_ic, 1, 1, 0.1, 8, 1e-4, 2);
+
+pause  % Press any key to continue
+
+%%%% =========================================================================
+%  Bode Plot of Controller
+%%%% =========================================================================
+clf
+omega = logspace(-2, 6, 300);
+k1g = frsp(k1, omega);
+title('Bode Plot of Controller, k1')
+xlabel('Frequency (rad/sec)')
+vplot('bode', k1g)
+
+pause  % Press any key to continue
+clc
+
+%%%% =========================================================================
+%  Frequency Response and Peak Norm Analysis
+%%%% =========================================================================
+omega_2 = logspace(0, 5, 50);
+g1g = frsp(g1, omega_2);
+
+% Find peak norm of the frequency response
+g1pk = pkvnorm(g1g);
+fprintf('\n Final Gamma: %g, \n Max Singular Value: %g \n\n', gf1, g1pk)
+
+%%%% =========================================================================
+%  Controller Transfer Function
+%%%% =========================================================================
+g1gs = vsvd(g1g);
+seesys(k1)
+
+% Convert state-space representation to transfer function
+[ak, bk, ck, dk] = unpck(k1);
+[numk, denk] = ss2tf(ak, bk, ck, dk);
+[zk, pk, kk] = tf2zp(numk, denk);
+
+% Print transfer function
+printsys(numk, denk, 's')
+
+%%%% =========================================================================
+%  End of Script
+%%%% =========================================================================
+disp('This concludes the example.')
