@@ -24,16 +24,10 @@ clc
 %  2. Define Plant Transfer Function and Weighting Functions
 %%%% =========================================================================
 % Plant Transfer Function:
-%        1
-% P(s) = -----------------
-%        (s - 1)(s - 2)
 numerator_plant = [1];
 denominator_plant = conv([1 -1], [1 -2]);
 
 % Weighting function W_t:
-%        (s + 1)^2
-% W_t = ------------
-%           25
 numerator_wt = [1 2 1];
 denominator_wt = 25;
 
